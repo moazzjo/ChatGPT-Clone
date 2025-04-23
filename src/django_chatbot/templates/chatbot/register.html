@@ -13,9 +13,7 @@
     align-items: center;
     height: 100vh;
   }
-  .card {
-    max-width: 400px;
-  }
+
   .card-header {
     background-color: #007bff;
     color: white;
@@ -57,22 +55,15 @@
   button[type=submit]:hover {
     background-color: #0062cc;
   }
-  .alert-danger {
-    background-color: #f8d7da;
-    color: #721c24;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #f5c6cb;
-    border-radius: 4px;
-  }
+
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="register-container">
-  <div class="card">
+  <div class="card shadow-lg mb-5 bg-body-tertiary rounded col-4">
     <div class="card-header">Register</div>
-    <div class="card-body">
+    <div class="card-body p-5">
       {% if error_message %}
         <div class="alert alert-danger" role="alert">{{ error_message }}</div>
       {% endif %}

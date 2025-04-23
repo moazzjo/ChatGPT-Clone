@@ -4,16 +4,18 @@ from django.http import JsonResponse
 #Django authentication and User model importing
 from django.contrib.auth.models import User
 from django.contrib import auth
-
 # AI importing library
 # from openai import OpenAI ---> openai need $ 
 from google import genai
-
-from dotenv import load_dotenv
-import os 
-
 #load the .env file for using the secure data inside it
+from dotenv import load_dotenv
 load_dotenv()
+# modls 
+from .models import Chat
+# my OS
+import os 
+# date time for the device location
+from django.utils import timezone
 
 
 # Gimini API 
@@ -27,22 +29,23 @@ def ask_genai(message):
         )
     else:
         response = "invalid value input, Please try again"
-    
-    return response.text.strip().splitlines()
+    return response.text
     
     
 
 # Create your views here.
 
 def chatbot(request):
-    
+    chats = Chat.objects.filter(user = request.user)
     if request.method == 'POST':
         message = request.POST.get('message')
         response = ask_genai(message)
         
+        chat = Chat(user=request.user, message=message, response=response, created_at=timezone.now)
+        chat.save()
         return JsonResponse({'message':message, 'response':response})
 
-    return render(request, 'chatbot/chatbot.html')
+    return render(request, 'chatbot/chatbot.html', {'chats':chats})
 
 
 def register(request):
