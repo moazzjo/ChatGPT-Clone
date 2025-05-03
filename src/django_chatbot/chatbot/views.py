@@ -4,6 +4,9 @@ from django.http import JsonResponse
 #Django authentication and User model importing
 from django.contrib.auth.models import User
 from django.contrib import auth
+
+# for login requires 
+from django.contrib.auth.decorators import login_required
 # AI importing library
 # from openai import OpenAI ---> openai need $ 
 from google import genai
@@ -17,9 +20,12 @@ import os
 # date time for the device location
 from django.utils import timezone
 
+import markdown
+
 
 # Gimini API 
 client = genai.Client(api_key=os.getenv("CHATGPT_API_KEY"))
+
 def ask_genai(message):
     
     if isinstance(message, str):    
@@ -34,16 +40,16 @@ def ask_genai(message):
     
 
 # Create your views here.
-
+@login_required
 def chatbot(request):
     chats = Chat.objects.filter(user = request.user)
     if request.method == 'POST':
         message = request.POST.get('message')
         response = ask_genai(message)
         
-        chat = Chat(user=request.user, message=message, response=response, created_at=timezone.now)
+        chat = Chat(user=request.user, message=message, response=markdown.markdown(response), created_at=timezone.now)
         chat.save()
-        return JsonResponse({'message':message, 'response':response})
+        return JsonResponse({'message':message, 'response':markdown.markdown(response)})
 
     return render(request, 'chatbot/chatbot.html', {'chats':chats})
 
